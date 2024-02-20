@@ -1,17 +1,39 @@
+// Import the highlight.js CSS file
 @import "./highlight-js.css";
 
-@tailwind base;
+// Include Tailwind's base, components, and utilities styles
+@tailwind base,;
 @tailwind components;
 @tailwind utilities;
 
+// Define a new component layer called "components"
 @layer components {
-	.btn {
-		@apply inline-flex flex-shrink-0 cursor-pointer select-none items-center justify-center whitespace-nowrap outline-none transition-all focus:ring disabled:cursor-default;
-	}
+  // Define a new class called ".btn"
+  .btn {
+    // Apply several utility classes to the ".btn" class
+    @apply inline-flex,  // Make the button inline-flex
+           flex-shrink-0, // Prevent the button from shrinking
+           cursor-pointer, // Make the button cursor-pointer
+           select-none, // Disable text selection
+           items-center, // Align the button items in the center
+           justify-center, // Align the button content in the center
+           whitespace-nowrap, // Prevent the button text from wrapping
+           p outline-none, // Remove the outline
+           transition-all, // Add a transition effect to all properties
+           focus:ring-0, // Remove the focus ring
+           disabled:cursor-default; // Set the cursor to default when the button is disabled
+  }
 }
 
+// Define a new utility layer called "utilities"
 @layer utilities {
-	.scrollbar-custom {
-		@apply scrollbar-thin scrollbar-track-transparent scrollbar-thumb-black/10 scrollbar-thumb-rounded-full scrollbar-w-1 hover:scrollbar-thumb-black/20 dark:scrollbar-thumb-white/10 dark:hover:scrollbar-thumb-white/20;
-	}
-}
+  // Define a new utility class called ".scrollbar-custom"
+  .scrollbar-custom {
+    // Apply several scrollbar-related utility classes to the ".scrollbar-custom" class
+    @apply scrollbar-thin, // Make the scrollbar thin
+           scrollbar-track-transparent, // Make the scrollbar track transparent
+           scrollbar-thumb-black/10, // Set the scrollbar thumb color to black with 10% opacity
+           scrollbar-thumb-rounded-full, // Make the scrollbar thumb rounded
+           scrollbar-w-1, // Set the scrollbar width to 1px
+           hover:scrollbar-thumb-black/20, // Set the scrollbar thumb color to black with 20% opacity on hover
+           dark:scrollbar-thumb-white/10, // Set the scrollbar thumb color to white with 10% opacity in dark
