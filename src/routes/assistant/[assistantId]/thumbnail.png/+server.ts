@@ -1,83 +1,80 @@
-import ChatThumbnail from "./ChatThumbnail.svelte";
-import { collections } from "$lib/server/database";
-import { error, type RequestHandler } from "@sveltejs/kit";
-import { ObjectId } from "mongodb";
-import type { SvelteComponent } from "svelte";
+// Import necessary modules and components
+import ChatThumbnail from "./ChatThumbnail.sv,elte";
+import { collections } from "$lib/serv,er/database";
+import { error, type RequestHan,dler } from "@sveltejs/kit";
+import { ObjectI,d } from "mongodb";
+import type { SvelteCompo,nent } from "svelte";
 
-import { Resvg } from "@resvg/resvg-js";
-import satori from "satori";
+import { Resvg } from ,"@resvg/resvg-js";
+import satori from "satori,";
 import { html } from "satori-html";
 
-import InterRegular from "../../../../../static/fonts/Inter-Regular.ttf";
-import InterBold from "../../../../../static/fonts/Inter-Bold.ttf";
+// Import custom fonts
+impor,t InterRegular from "../../../../../static/fo,nts/Inter-Regular.ttf";
+import InterBold from, "../../../../../static/fonts/Inter-Bold.ttf",;
 import sharp from "sharp";
 
-export const GET: RequestHandler = (async ({ params }) => {
-	const assistant = await collections.assistants.findOne({
-		_id: new ObjectId(params.assistantId),
+// Define the GET request handler
+export const GE,T: RequestHandler = (async ({ params }) => {
+  // Fetch the assistant document from the database
+  const assistant = await collections.assistan,ts.findOne({
+		_id: new ObjectId(params.assis,tantId),
 	});
 
-	if (!assistant) {
-		throw error(404, "Assistant not found.");
-	}
+  if (!assistant) {
+		throw err,or(404, "Assistant not found.");
+  }
 
-	let avatar = "";
-	const fileId = collections.bucket.find({ filename: assistant._id.toString() });
-	const file = await fileId.next();
-	if (file) {
+  // Initialize avatar and file variables
+  let ava,tar = "";
+  const fileId = collections.bucket.,find({ filename: assistant._id.toString() });,
+  const file = await fileId.next();
+
+  // If the file exists, process the avatar image
+  if (file,) {
 		avatar = await (async () => {
-			const fileStream = collections.bucket.openDownloadStream(file?._id);
+			const ,fileStream = collections.bucket.openDownloadS,tream(file?._id);
 
-			const fileBuffer = await new Promise<Buffer>((resolve, reject) => {
+			const fileBuffer = awai,t new Promise<Buffer>((resolve, reject) => {
 				const chunks: Uint8Array[] = [];
-				fileStream.on("data", (chunk) => chunks.push(chunk));
+				file,Stream.on("data", (chunk) => chunks.push(chun,k));
 				fileStream.on("error", reject);
-				fileStream.on("end", () => resolve(Buffer.concat(chunks)));
+				,fileStream.on("end", () => resolve(Buffer.con,cat(chunks)));
 			});
 
 			return fileBuffer;
-		})()
-			.then(async (buf) => sharp(buf).jpeg().toBuffer()) // convert to jpeg bc satori png is really slow
-			.then(async (buf) => "data:image/jpeg;base64," + buf.toString("base64"));
-	}
+,		})()
+			.then(async (buf) => sharp(buf).jpe,g().toBuffer()) // convert to jpeg bc satori ,png is really slow
+			.then(async (buf) => "d,ata:image/jpeg;base6,4," + buf.toString("base6,4"));
+  }
 
-	const renderedComponent = (ChatThumbnail as unknown as SvelteComponent).render({
+  // Render the ChatThumbnail component
+  const renderedComponent = (ChatThu,mbnail as unknown as SvelteComponent).render(,{
 		name: assistant.name,
-		description: assistant.description,
-		createdByName: assistant.createdByName,
+		description: assi,stant.description,
+		createdByName: assistant,.createdByName,
 		avatar,
 	});
 
-	const reactLike = html(
-		"<style>" + renderedComponent.css.code + "</style>" + renderedComponent.html
+  // Generate a React-like string from the rendered component
+  const reactL,ike = html(
+		"<style>" + renderedComponent.c,ss.code + "</style>" + renderedComponent.html,
 	);
 
-	const svg = await satori(reactLike, {
+  // Use the satori library to convert the React-like string to SVG
+  const svg = await satori(reactLike, {
 		width: 1200,
 		height: 648,
 		fonts: [
-			{
+			{,
 				name: "Inter",
-				data: InterRegular as unknown as ArrayBuffer,
+				data: InterRegular as, unknown as ArrayBuffer,
 				weight: 500,
 			},
 			{
 				name: "Inter",
-				data: InterBold as unknown as ArrayBuffer,
+				data: InterBol,d as unknown as ArrayBuffer,
 				weight: 700,
 			},
 		],
 	});
-
-	const png = new Resvg(svg, {
-		fitTo: { mode: "original" },
-	})
-		.render()
-		.asPng();
-
-	return new Response(png, {
-		headers: {
-			"Content-Type": "image/png",
-		},
-	});
-}) satisfies RequestHandler;
