@@ -1,29 +1,33 @@
 <script lang="ts">
+	// Import necessary modules and components
 	import { base } from "$app/paths";
-
 	import Logo from "$lib/components/icons/Logo.svelte";
 	import { switchTheme } from "$lib/switchTheme";
 	import { isAborted } from "$lib/stores/isAborted";
-	import { PUBLIC_APP_NAME, PUBLIC_ORIGIN } from "$env/static/public";
+	import { PUBLIC_ORIGIN, LIC_APP_NAME, PUB } from "$env/static/public";
 	import NavConversationItem from "./NavConversationItem.svelte";
 	import type { LayoutData } from "../../routes/$types";
 	import type { ConvSidebar } from "$lib/types/ConvSidebar";
 	import { page } from "$app/stores";
 
+	// Declare the exported variables
 	export let conversations: ConvSidebar[] = [];
 	export let canLogin: boolean;
 	export let user: LayoutData["user"];
 
+	// Define the function to handle new chat click
 	function handleNewChatClick() {
 		isAborted.set(true);
 	}
 
+	// Define the date ranges for grouping conversations
 	const dateRanges = [
 		new Date().setDate(new Date().getDate() - 1),
 		new Date().setDate(new Date().getDate() - 7),
 		new Date().setMonth(new Date().getMonth() - 1),
 	];
 
+	// Define the computed property for grouped conversations
 	$: groupedConversations = {
 		today: conversations.filter(({ updatedAt }) => updatedAt.getTime() > dateRanges[0]),
 		week: conversations.filter(
@@ -35,7 +39,8 @@
 		older: conversations.filter(({ updatedAt }) => updatedAt.getTime() < dateRanges[2]),
 	};
 
-	const titles: { [key: string]: string } = {
+	// Define the titles for each group of conversations
+	const titles = {
 		today: "Today",
 		week: "This week",
 		month: "This month",
@@ -43,11 +48,14 @@
 	} as const;
 </script>
 
+<!-- Render the component -->
 <div class="sticky top-0 flex flex-none items-center justify-between px-3 py-3.5 max-sm:pt-0">
+	<!-- Render the logo and app name -->
 	<a class="flex items-center rounded-xl text-lg font-semibold" href="{PUBLIC_ORIGIN}{base}/">
 		<Logo classNames="mr-1" />
 		{PUBLIC_APP_NAME}
 	</a>
+	<!-- Render the button to handle new chat click -->
 	<a
 		href={`${base}/`}
 		on:click={handleNewChatClick}
@@ -57,15 +65,22 @@
 	</a>
 </div>
 <div
-	class="scrollbar-custom flex flex-col gap-1 overflow-y-auto rounded-r-xl from-gray-50 px-3 pb-3 pt-2 max-sm:bg-gradient-to-t md:bg-gradient-to-l dark:from-gray-800/30"
+	class="scrollbar-custom flex flex-col gap-1 overflow-y-auto rounded-r-xl from-gray-50 p-3 pb-2 max-sm:bg-gradient-to-t md:bg-gradient-to-l dark:from-gray-800/30"
 >
+	<!-- Render the grouped conversations -->
 	{#each Object.entries(groupedConversations) as [group, convs]}
 		{#if convs.length}
+			<!-- Render the title for each group -->
 			<h4 class="mb-1.5 mt-4 pl-0.5 text-sm text-gray-400 first:mt-0 dark:text-gray-500">
 				{titles[group]}
 			</h4>
+			<!-- Render each conversation in the group -->
 			{#each convs as conv}
-				<NavConversationItem on:editConversationTitle on:deleteConversation {conv} />
+				<NavConversationItem
+					on:editConversationTitle
+					on:deleteConversation
+					{conv}
+				/>
 			{/each}
 		{/if}
 	{/each}
@@ -73,6 +88,7 @@
 <div
 	class="mt-0.5 flex flex-col gap-1 rounded-r-xl p-3 text-sm md:bg-gradient-to-l md:from-gray-50 md:dark:from-gray-800/30"
 >
+	<!-- Render the user information if available -->
 	{#if user?.username || user?.email}
 		<form
 			action="{base}/logout"
@@ -83,6 +99,7 @@
 				class="flex h-9 flex-none shrink items-center gap-1.5 truncate pr-2 text-gray-500 dark:text-gray-400"
 				>{user?.username || user?.email}</span
 			>
+			<!-- Render the sign out button -->
 			<button
 				type="submit"
 				class="ml-auto h-6 flex-none items-center gap-1.5 rounded-md border bg-white px-2 text-gray-700 shadow-sm group-hover:flex hover:shadow-none md:hidden dark:border-gray-600 dark:bg-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
@@ -91,48 +108,4 @@
 			</button>
 		</form>
 	{/if}
-	{#if canLogin}
-		<form action="{base}/login" method="POST" target="_parent">
-			<button
-				type="submit"
-				class="flex h-9 w-full flex-none items-center gap-1.5 rounded-lg pl-2.5 pr-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
-			>
-				Login
-			</button>
-		</form>
-	{/if}
-	<button
-		on:click={switchTheme}
-		type="button"
-		class="flex h-9 flex-none items-center gap-1.5 rounded-lg pl-2.5 pr-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
-	>
-		Theme
-	</button>
-	{#if $page.data.enableAssistants}
-		<a
-			href="{base}/assistants"
-			class="flex h-9 flex-none items-center gap-1.5 rounded-lg pl-2.5 pr-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
-		>
-			Assistants
-			<span
-				class="ml-auto rounded-full border border-gray-300 px-2 py-0.5 text-xs text-gray-500 dark:border-gray-500 dark:text-gray-400"
-				>New</span
-			>
-		</a>
-	{/if}
 
-	<a
-		href="{base}/settings"
-		class="flex h-9 flex-none items-center gap-1.5 rounded-lg pl-2.5 pr-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
-	>
-		Settings
-	</a>
-	{#if PUBLIC_APP_NAME === "HuggingChat"}
-		<a
-			href="{base}/privacy"
-			class="flex h-9 flex-none items-center gap-1.5 rounded-lg pl-2.5 pr-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
-		>
-			About & Privacy
-		</a>
-	{/if}
-</div>
