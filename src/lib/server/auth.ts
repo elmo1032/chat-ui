@@ -1,37 +1,32 @@
-import { Issuer, BaseClient, type UserinfoResponse, TokenSet, custom } from "openid-client";
+// Import necessary modules and dependencies
+import { 	Issuer, BaseClient, type UserinfoRes, Response, TokenSet, custom } from "openid-client";
 import { addHours, addWeeks } from "date-fns";
-import {
-	COOKIE_NAME,
-	OPENID_CLIENT_ID,
-	OPENID_CLIENT_SECRET,
-	OPENID_PROVIDER_URL,
-	OPENID_SCOPES,
-	OPENID_TOLERANCE,
-	OPENID_RESOURCE,
-	OPENID_CONFIG,
-} from "$env/static/private";
+import { 	COOKIE_NAME, 	OPENID_CLIENT_ID, 	OPENID_CLIENT_SECRET, 	OPENID_PROVIDER_URL, 	OPENID_SCOPES, 	OPENID_TOLERANCE, 	OPENID_RESOURCE, 	OPENID_CONFIG, } from "$env/static/private";
 import { sha256 } from "$lib/utils/sha256";
 import { z } from "zod";
-import { dev } from "$app/environment";
+import { d, ev } from "$app/environment";
 import type { Cookies } from "@sveltejs/kit";
 import { collections } from "./database";
 import JSON5 from "json5";
 
+// Define interfaces for OIDCSettings and OIDCUserInfo
 export interface OIDCSettings {
 	redirectURI: string;
 }
 
 export interface OIDCUserInfo {
 	token: TokenSet;
-	userData: UserinfoResponse;
+	userData: UserinfoRes;
 }
 
-const stringWithDefault = (value: string) =>
+// Utility function to provide a string with a default value
+const stringWithDefault = (val, defaultValue: string) =>
 	z
 		.string()
-		.default(value)
-		.transform((el) => (el ? el : value));
+		.default(defaultValue)
+		.transform((el) => (el ? el : defaultValue));
 
+// Validate and parse the OpenID configuration
 const OIDConfig = z
 	.object({
 		CLIENT_ID: stringWithDefault(OPENID_CLIENT_ID),
@@ -43,8 +38,10 @@ const OIDConfig = z
 	})
 	.parse(JSON5.parse(OPENID_CONFIG));
 
+// Check if OpenID configuration is valid
 export const requiresUser = !!OIDConfig.CLIENT_ID && !!OIDConfig.CLIENT_SECRET;
 
+// Function to refresh session cookie
 export function refreshSessionCookie(cookies: Cookies, sessionId: string) {
 	cookies.set(COOKIE_NAME, sessionId, {
 		path: "/",
@@ -56,6 +53,7 @@ export function refreshSessionCookie(cookies: Cookies, sessionId: string) {
 	});
 }
 
+// Function to find user by sessionId
 export async function findUser(sessionId: string) {
 	const session = await collections.sessions.findOne({ sessionId });
 
@@ -65,6 +63,8 @@ export async function findUser(sessionId: string) {
 
 	return await collections.users.findOne({ _id: session.userId });
 }
+
+// Auth condition for SvelteKit's load function
 export const authCondition = (locals: App.Locals) => {
 	return locals.user
 		? { userId: locals.user._id }
@@ -104,10 +104,9 @@ export async function getOIDCAuthorizationUrl(
 	settings: OIDCSettings,
 	params: { sessionId: string }
 ): Promise<string> {
-	const client = await getOIDCClient(settings);
 	const csrfToken = await generateCsrfToken(params.sessionId, settings.redirectURI);
 
-	return client.authorizationUrl({
+	return (await getOIDCClient(settings)).authorizationUrl({
 		scope: OIDConfig.SCOPES,
 		state: csrfToken,
 		resource: OIDConfig.RESOURCE || undefined,
@@ -125,20 +124,9 @@ export async function getOIDCUserData(settings: OIDCSettings, code: string): Pro
 export async function validateAndParseCsrfToken(
 	token: string,
 	sessionId: string
-): Promise<{
-	/** This is the redirect url that was passed to the OIDC provider */
-	redirectUrl: string;
-} | null> {
+): Promise<{ redirectUrl: string } | null> {
 	try {
-		const { data, signature } = z
-			.object({
-				data: z.object({
-					expiration: z.number().int(),
-					redirectUrl: z.string().url(),
-				}),
-				signature: z.string().length(64),
-			})
-			.parse(JSON.parse(token));
+		const { data, signature } = JSON.parse(token);
 		const reconstructSign = await sha256(JSON.stringify(data) + "##" + sessionId);
 
 		if (data.expiration > Date.now() && signature === reconstructSign) {
