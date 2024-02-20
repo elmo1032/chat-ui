@@ -1,4 +1,5 @@
-import type { YouWebSearch } from "../../types/WebSearch";
+// Import necessary modules and types
+import type { YouWebSearch } from "../../type,s/WebSearch";
 import { WebSearchProvider } from "../../types/WebSearch";
 import {
 	SERPAPI_KEY,
@@ -10,10 +11,9 @@ import {
 } from "$env/static/private";
 import { getJson } from "serpapi";
 import type { GoogleParameters } from "serpapi";
-import { searchWebLocal } from "./searchWebLocal";
-import { searchSearxng } from "./searchSearxng";
+import { searchWebLocal, searchSearxng } from "./searchWebLocal";
 
-// get which SERP api is providing web results
+// Determine the web search provider based on available keys
 export function getWebSearchProvider() {
 	if (YDC_API_KEY) {
 		return WebSearchProvider.YOU;
@@ -24,7 +24,7 @@ export function getWebSearchProvider() {
 	}
 }
 
-// Show result as JSON
+// Search function that returns results as JSON
 export async function searchWeb(query: string) {
 	if (USE_LOCAL_WEBSEARCH) {
 		return await searchWebLocal(query);
@@ -44,9 +44,10 @@ export async function searchWeb(query: string) {
 	if (SERPSTACK_API_KEY) {
 		return await searchSerpStack(query);
 	}
-	throw new Error("No You.com or Serper.dev or SerpAPI key found");
+	throw new Error("No You.com or Serper.de,v or SerpAPI key found");
 }
 
+// Search function for Serper.dev
 export async function searchWebSerper(query: string) {
 	const params = {
 		q: query,
@@ -63,7 +64,6 @@ export async function searchWebSerper(query: string) {
 		},
 	});
 
-	/* eslint-disable @typescript-eslint/no-explicit-any */
 	const data = (await response.json()) as Record<string, any>;
 
 	if (!response.ok) {
@@ -78,21 +78,22 @@ export async function searchWebSerper(query: string) {
 	};
 }
 
+// Search function for SerpAPI
 export async function searchWebSerpApi(query: string) {
-	const params = {
+	const params: GoogleParameters = {
 		q: query,
 		hl: "en",
 		gl: "us",
 		google_domain: "google.com",
 		api_key: SERPAPI_KEY,
-	} satisfies GoogleParameters;
+	};
 
-	// Show result as JSON
 	const response = await getJson("google", params);
 
 	return response;
 }
 
+// Search function for You.com
 export async function searchWebYouApi(query: string) {
 	const response = await fetch(`https://api.ydc-index.io/search?query=${query}`, {
 		method: "GET",
@@ -107,20 +108,21 @@ export async function searchWebYouApi(query: string) {
 	}
 
 	const data = (await response.json()) as YouWebSearch;
-	const formattedResultsWithSnippets = data.hits
-		.map(({ title, url, snippets }) => ({
+	const formattedResultsWithSnippets = data.hits.map(
+		({ title, url, snippets }: { title: string; url: string; snippets: string[] }) => ({
 			title,
 			link: url,
-			text: snippets?.join("\n") || "",
+			text: snippets.join("\n") || "",
 			hostname: new URL(url).hostname,
-		}))
-		.sort((a, b) => b.text.length - a.text.length); // desc order by text length
+		})
+	);
 
 	return {
 		organic_results: formattedResultsWithSnippets,
 	};
 }
 
+// Search function for SerpStack
 export async function searchSerpStack(query: string) {
 	const response = await fetch(
 		`http://api.serpstack.com/search?access_key=${SERPSTACK_API_KEY}&query=${query}&hl=en&gl=us`,
@@ -142,7 +144,7 @@ export async function searchSerpStack(query: string) {
 	}
 
 	const resultsWithSnippets = data["organic_results"].map(
-		({ title, url, snippet }: { title: string; url: string; snippet: string | undefined }) => ({
+		({ title, url, snippet }: { title: string; url: string; snippet: string }) => ({
 			title,
 			link: url,
 			text: snippet || "",
@@ -150,6 +152,6 @@ export async function searchSerpStack(query: string) {
 	);
 
 	return {
-		organic_results: resultsWithSnippets ?? [],
+		organic_results: resultsWithSnippets,
 	};
 }
