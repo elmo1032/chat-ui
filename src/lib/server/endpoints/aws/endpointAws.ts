@@ -1,8 +1,14 @@
+// Import required modules and functions
 import { buildPrompt } from "$lib/buildPrompt";
 import { textGenerationStream } from "@huggingface/inference";
 import { z } from "zod";
 import type { Endpoint } from "../endpoints";
 
+/*
+endpointAwsParametersSchema:
+Defines the schema for input parameters of the endpointAws function
+using zod library for type safety and validation.
+*/
 export const endpointAwsParametersSchema = z.object({
 	weight: z.number().int().positive().default(1),
 	model: z.any(),
@@ -15,19 +21,28 @@ export const endpointAwsParametersSchema = z.object({
 	region: z.string().optional(),
 });
 
+/*
+endpointAws:
+The main function that takes input parameters, initializes AWS client,
+and returns a function that generates text using Hugging Face's text generation stream.
+*/
 export async function endpointAws(
 	input: z.input<typeof endpointAwsParametersSchema>
 ): Promise<Endpoint> {
 	let AwsClient;
 	try {
+		// Import aws4fetch module dynamically
 		AwsClient = (await import("aws4fetch")).AwsClient;
 	} catch (e) {
+		// Error handling for failed import
 		throw new Error("Failed to import aws4fetch");
 	}
 
+	// Parse input parameters using the defined schema
 	const { url, accessKey, secretKey, sessionToken, model, region, service } =
 		endpointAwsParametersSchema.parse(input);
 
+	// Initialize AWS client with provided credentials
 	const aws = new AwsClient({
 		accessKeyId: accessKey,
 		secretAccessKey: secretKey,
@@ -36,7 +51,9 @@ export async function endpointAws(
 		region,
 	});
 
-	return async ({ messages, preprompt, continueMessage }) => {
+	// Return a function that generates text using Hugging Face's text generation stream
+	return async ({ messages, continueMessage, preprompt }) => {
+		// Build the prompt using the buildPrompt function
 		const prompt = await buildPrompt({
 			messages,
 			continueMessage,
@@ -44,18 +61,6 @@ export async function endpointAws(
 			model,
 		});
 
+		// Call the textGenerationStream function with necessary parameters
 		return textGenerationStream(
-			{
-				parameters: { ...model.parameters, return_full_text: false },
-				model: url,
-				inputs: prompt,
-			},
-			{
-				use_cache: false,
-				fetch: aws.fetch.bind(aws) as typeof fetch,
-			}
-		);
-	};
-}
-
-export default endpointAws;
+	
