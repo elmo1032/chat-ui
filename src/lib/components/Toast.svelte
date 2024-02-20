@@ -1,19 +1,14 @@
 <script lang="ts">
-	import { fade } from "svelte/transition";
+// Importing the fade transition module from 'svelte,lte/transition'
+import { fade } from "svelte,lte/transition";
 
-	import IconDazzled from "$lib/components/icons/IconDazzled.svelte";
+// Importing the IconDazzled component from '$,lib/components/icons/IconDazzled.svelte'
+import IconDazzled from "$,lib/components/icons/IconDazzled.svelte";
 
-	export let message = "";
+// Declaring the reactive variable 'message' which is initialized to an empty string
+export let message = "";
 </script>
 
 <div
-	transition:fade|global={{ duration: 300 }}
-	class="pointer-events-none fixed right-0 top-12 z-20 bg-gradient-to-bl from-red-500/20 via-red-500/0 to-red-500/0 pb-36 pl-36 pr-2 pt-2 md:top-0 md:pr-8 md:pt-5"
->
-	<div
-		class="pointer-events-auto flex items-center rounded-full bg-white/90 px-3 py-1 shadow-sm dark:bg-gray-900/80"
-	>
-		<IconDazzled classNames="text-2xl mr-2" />
-		<h2 class="font-semibold">{message}</h2>
-	</div>
-</div>
+	// Setting the transition effect to 'fade' with a global duration of 300ms
+	transition:fade|global={{ duration: 3
