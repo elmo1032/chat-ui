@@ -5,37 +5,16 @@ export function getHref(
 		existingKeys?: { behaviour: "delete_except" | "delete"; keys: string[] };
 	}
 ) {
+	// Create a new URL object based on the input URL
 	const newUrl = new URL(url);
 	const { newKeys, existingKeys } = modifications;
 
-	// exsiting keys logic
+	// Existing keys logic
 	if (existingKeys) {
 		const { behaviour, keys } = existingKeys;
+		// If the behaviour is to delete specific keys
 		if (behaviour === "delete") {
+			// Loop through the keys and delete them from the URL's search parameters
 			for (const key of keys) {
 				newUrl.searchParams.delete(key);
-			}
-		} else {
-			// delete_except
-			const keysToPreserve = keys;
-			for (const key of [...newUrl.searchParams.keys()]) {
-				if (!keysToPreserve.includes(key)) {
-					newUrl.searchParams.delete(key);
-				}
-			}
-		}
-	}
-
-	// new keys logic
-	if (newKeys) {
-		for (const [key, val] of Object.entries(newKeys)) {
-			if (val) {
-				newUrl.searchParams.set(key, val);
-			} else {
-				newUrl.searchParams.delete(key);
-			}
-		}
-	}
-
-	return newUrl.toString();
-}
+	
