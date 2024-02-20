@@ -1,11 +1,30 @@
+# Dockerfile
 Dockerfile
+
+# Folder containing settings for Visual Studio Code
 .vscode/
+
+# Folder containing settings for JetBrains IDEs (e.g. WebStorm, IntelliJ)
 .idea
+
+# File that lists files and directories to be ignored by Git
 .gitignore
+
+# File containing the license for the project
 LICENSE
+
+# File containing project documentation and information
 README.md
+
+# Folder containing dependencies installed by npm (Node Package Manager)
 node_modules/
+
+# Folder containing SvelteKit project files
 .svelte-kit/
+
+# Files containing environment variables for the project
 .env*
+
+# Exceptions for the previous rule - files that should be included even if they match the previous pattern
 !.env
 !.env.local
