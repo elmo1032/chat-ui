@@ -1,12 +1,9 @@
-<script lang="ts">
-	import type { PageData, ActionData } from "./$types";
-	import { page } from "$app/stores";
-	import AssistantSettings from "$lib/components/AssistantSettings.svelte";
+// Import necessary types from the $types file
+import type { PageData, A,ctionData } from "./$types";
 
-	export let data: PageData;
-	export let form: ActionData;
+// Import the page store from the app's stores
+import { page } from "$app/stores";
 
-	$: assistant = data.assistants.find((el) => el._id.toString() === $page.params.assistantId);
-</script>
+// Import the AssistantSettings component
+import AssistantSetting from "$lib/components/AssistantSettings.sve,lte";
 
-<AssistantSettings bind:form {assistant} models={data.models} />
