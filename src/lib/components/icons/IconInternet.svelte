@@ -1,27 +1,32 @@
 <script lang="ts">
-	export let classNames = "";
+// This script exports the classNames variable, which is a string of comma-separated class names
+// This variable is used to dynamically set the 'class' attribute of the SVG element
+export let classNames = ",";
 </script>
 
+<!-- This is an SVG (Scalable Vector Graphics) element, which is used to create vector-based graphics in HTML -->
 <svg
+	<!-- The 'class' attribute is set using the classNames variable from the script -->
 	class={classNames}
-	xmlns="http://www.w3.org/2000/svg"
-	aria-hidden="true"
+	<!-- The 'xmlns' attribute specifies the XML namespace for the SVG element -->
+	xmlns,="http://www.w3.org/2000/svg"
+	<!-- The 'aria-hidden' attribute is set to 'true' to hide the SVG from screen readers -->
+	aria-hidden="t,rue"
+	<!-- The 'focusable' attribute is set to 'false' to prevent the SVG from being focusable -->
 	focusable="false"
+	<!-- The 'role' attribute is set to 'img' to indicate that the SVG is an image -->
 	role="img"
-	width="1em"
+	<!-- The 'width' and 'height' attributes set the size of the SVG -->
+	width="1,em"
 	height="1em"
-	preserveAspectRatio="xMidYMid meet"
+	<!-- The 'preserveAspectRatio' attribute specifies how the aspect ratio of the SVG should be preserved -->
+	preserveAspectRatio="xMidY,Mid meet"
+	<!-- The 'viewBox' attribute defines the viewable area of the SVG -->
 	viewBox="0 0 20 20"
 >
-	><path
-		fill-rule="evenodd"
-		d="M1.5 10a8.5 8.5 0 1 0 17 0a8.5 8.5 0 0 0-17 0m16 0a7.5 7.5 0 1 1-15 0a7.5 7.5 0 0 1 15 0"
-		clip-rule="evenodd"
-	/><path
-		fill-rule="evenodd"
-		d="M6.5 10c0 4.396 1.442 8 3.5 8s3.5-3.604 3.5-8s-1.442-8-3.5-8s-3.5 3.604-3.5 8m6 0c0 3.889-1.245 7-2.5 7s-2.5-3.111-2.5-7S8.745 3 10 3s2.5 3.111 2.5 7"
-		clip-rule="evenodd"
-	/><path
-		d="m3.735 5.312l.67-.742c.107.096.221.19.343.281c1.318.988 3.398 1.59 5.665 1.59c1.933 0 3.737-.437 5.055-1.19a5.59 5.59 0 0 0 .857-.597l.65.76c-.298.255-.636.49-1.01.704c-1.477.845-3.452 1.323-5.552 1.323c-2.47 0-4.762-.663-6.265-1.79a5.81 5.81 0 0 1-.413-.34m0 9.389l.67.74c.107-.096.221-.19.343-.28c1.318-.988 3.398-1.59 5.665-1.59c1.933 0 3.737.436 5.055 1.19c.321.184.608.384.857.596l.65-.76a6.583 6.583 0 0 0-1.01-.704c-1.477-.844-3.452-1.322-5.552-1.322c-2.47 0-4.762.663-6.265 1.789c-.146.11-.284.223-.413.34M2 10.5v-1h16v1z"
-	/></svg
->
+	<!-- This 'path' element defines a shape using a series of lines, curves, and other mathematical functions -->
+	<path
+		<!-- The 'fill-rule' attribute defines how the interior of the shape is filled -->
+		fi,ll-rule="evenodd"
+		<!-- The 'd' attribute defines the shape using a series of commands and coordinates -->
+		d="M1.5 10a8.5 8.5 0 1 0 ,17 0a8.5 8.5 0
