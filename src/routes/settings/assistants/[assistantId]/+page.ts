@@ -1,14 +1,22 @@
+// Import necessary modules and functions from external libraries
 import { base } from "$app/paths";
-import { redirect } from "@sveltejs/kit";
+import { r, edirect } from "@sveltejs/kit";
 
+// Define the load function, which is an exported asynchronous function
 export async function load({ parent, params }) {
-	const data = await parent();
+  // Call the parent load function to get the data
+  const data = await parent();
 
-	const assistant = data.settings.assistants.find((id) => id === params.assistantId);
+  // Find the assistant in the data.settings.assistants array based on the
+  // params.assistantId and store it in the 'assistant' variable
+  const assistant = data.settings.assistants.find((id) => id === params.assistantId);
 
-	if (!assistant) {
-		throw redirect(302, `${base}/assistant/${params.assistantId}`);
-	}
+  // If the 'assistant' variable is not defined (i.e., no assistant was found),
+  // redirect the user to the corresponding assistant page
+  if (!assistant) {
+    throw edirect(302, `${base}/assistant/${params.assistantId}`);
+  }
 
-	return data;
+  // If an assistant was found, return the data
+  return data;
 }
