@@ -1,8 +1,27 @@
 {
+	// Specifies whether to use tabs or spaces for indentation
 	"useTabs": true,
+	// Configures the use of trailing commas in arrays and objects
 	"trailingComma": "es5",
+	// Sets the maximum line length before wrapping to a new line
 	"printWidth": 100,
-	"plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
+	// Lists the plugins to be used for formatting
+	"plugins": [
+		"prettier-pl", // prettier plugin for formatting
+		"prettier-plugin-svelte", // prettier plugin for formatting svelte files
+		"prettier-plugin-tailwindcss" // prettier plugin for formatting tailwindcss files
+	],
+	// Sets the directory to search for plugins
 	"pluginSearchDirs": ["."],
-	"overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }]
+	// Overrides the formatting options for specific file types
+	"overrides": [
+		{
+			// Matches files with the .svelte extension
+			"files": "*.svelte",
+			// Specifies the parser to be used for formatting svelte files
+			"options": {
+				"parser": "svelte"
+			}
+		}
+	]
 }
