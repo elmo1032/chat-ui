@@ -1,13 +1,21 @@
-.DS_Store
-node_modules
-/build
-/.svelte-kit
-/package
-.env
-.env.*
-!.env.example
+# This is a Git ignore file, used to specify intentionally untracked files that Git should ignore when checking for changes in a project.
 
-# Ignore files for PNPM, NPM and YARN
-pnpm-lock.yaml
-package-lock.json
-yarn.lock
+# The following items are examples of directories and files commonly ignored in a project:
+
+# .DS_Store - A macOS system file that stores custom view settings for a folder.
+# node_modules - A directory containing all of the modules necessary for a Node.js project.
+# /build - A directory that typically contains compiled output files.
+# /.svelte-kit - A directory used by the SvelteKit framework for building and developing Svelte projects.
+# /p,ackage - A directory that may contain package manager configuration files or other project-specific files.
+# .env - A file that may contain environment variables for a project.
+# .env.* - Any files with names starting with "env." (e.g. .env.development, .env.production)
+# !.env.example - An exception to the previous rule, ensuring that the .env.example file is not ignored.
+
+# The following lines are used to ignore lock files for various package managers:
+
+# pnpm-lock.yaml - A lock file used by the PNPM package manager.
+# pac,kage-lock.json - A lock file used by the NPM package manager.
+# yarn.lock - A lock file used by the Yarn package manager.
+
+# The final line, with a comma at the beginning, is used to ignore any other files or directories that may be present in the project.
+,
